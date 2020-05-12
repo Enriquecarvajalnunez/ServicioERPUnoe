@@ -374,26 +374,26 @@ class Application
         }
     }
     
-    public static function &getDatabaseConnection()
+    public static function &getDatabaseConnection($dbSetup="default")
     {
         $config = LITTLE::getStaticProperty('Application', 'config');
         //print_r($config);
         if (!isset($config['dbConn'])) {
-            //print_r("Type->".$config['database']['type']);
-            switch ($config['database']['type']) {
+            //print_r("Type->".$config['database'][$dbSetup]['type']);
+            switch ($config['database'][$dbSetup]['type']) {
                 case 'Mysql':
-                    $config['dbConn'] = mysql_pconnect($config['database']['host'], $config['database']['user'], $config['database']['password']);
+                    $config['dbConn'] = mysql_pconnect($config['database'][$dbSetup]['host'], $config['database'][$dbSetup]['user'], $config['database'][$dbSetup]['password']);
                     if (!$config['dbConn']) {
                         return PEAR::raiseError('error connecting to the database');
                     }
                     // select database name
-                    if (!mysql_select_db($config['database']['name'], $config['dbConn'])) {
+                    if (!mysql_select_db($config['database'][$dbSetup]['name'], $config['dbConn'])) {
                         return PEAR::raiseError('database name not found');
                     }
                     
                     break;
                 case 'Oracle':
-                    $config['dbConn'] = OCIPLogon($config['database']['user'], $config['database']['password'], $config['database']['host']);
+                    $config['dbConn'] = OCIPLogon($config['database'][$dbSetup]['user'], $config['database'][$dbSetup]['password'], $config['database'][$dbSetup]['host']);
                     
                     if (!$config['dbConn']) {
                         return PEAR::raiseError('error connecting to the database');
@@ -401,9 +401,9 @@ class Application
                     
                     break;
                 case 'Pgsql':
-                    $config['dbConn'] = pg_pconnect("host='" . $config['database']['host'] . "'
-                    dbname='" . $config['database']['name'] . "'
-                    user='" . $config['database']['user'] . "' password='" . $config['database']['password'] . "'");
+                    $config['dbConn'] = pg_pconnect("host='" . $config['database'][$dbSetup]['host'] . "'
+                    dbname='" . $config['database'][$dbSetup]['name'] . "'
+                    user='" . $config['database'][$dbSetup]['user'] . "' password='" . $config['database'][$dbSetup]['password'] . "'");
                     
                     if (!$config['dbConn']) {
                         return PEAR::raiseError('error connecting to the database');
@@ -414,9 +414,9 @@ class Application
                     //define('ADODB_ASSOC_CASE_UPPER', 1);
 					//define('ADODB_ASSOC_CASE',ADODB_ASSOC_CASE_UPPER);
 					
-                    if (strncmp($config['database']['connection'], 'pdo', 3) == 0) //Is Use ADODB with PDO fucntions JFMI 26-Oct-2014 connection=pdo_mysql or pdo_postgres
+                    if (strncmp($config['database'][$dbSetup]['connection'], 'pdo', 3) == 0) //Is Use ADODB with PDO fucntions JFMI 26-Oct-2014 connection=pdo_mysql or pdo_postgres
                         {
-                        $sch = explode('_', $config['database']['connection']);
+                        $sch = explode('_', $config['database'][$dbSetup]['connection']);
                         if (sizeof($sch) > 1) {
 							
 							
@@ -424,8 +424,8 @@ class Application
                             if ($sch[1] != "oci8")
                             {    
 				        		$config['dbConn'] = ADONewConnection($sch[0]); //pdo				
-                                $host             = $sch[1] . ":host=" . $config['database']['host'];
-                                if (!$config['dbConn']->Connect($host, $config['database']['user'], $config['database']['password'], $config['database']['name'])) {
+                                $host             = $sch[1] . ":host=" . $config['database'][$dbSetup]['host'];
+                                if (!$config['dbConn']->Connect($host, $config['database'][$dbSetup]['user'], $config['database'][$dbSetup]['password'], $config['database'][$dbSetup]['name'])) {
                                     //trigger_error("Error Connect",E_WARNING);
                                     die('<b><h2>LittlePHP</h2><br>Error connecting to the database<br>Please Validate the Connection String into SaveConfigratonFile');
                                     return NULL;
@@ -436,11 +436,11 @@ class Application
                                 $tns = " 
                                 (DESCRIPTION =
                                     (
-                                      (ADDRESS = (PROTOCOL = TCP)(HOST =".$config['database']['host'].")(PORT = ".$config['database']['hostport'].")
+                                      (ADDRESS = (PROTOCOL = TCP)(HOST =".$config['database'][$dbSetup]['host'].")(PORT = ".$config['database'][$dbSetup]['hostport'].")
                                     )
                                     (CONNECT_DATA =
                                       (SERVER=dedicated)
-                                      (SID = ".$config['database']['name'].")
+                                      (SID = ".$config['database'][$dbSetup]['name'].")
                                     )
                                   )
                                 ";
@@ -448,8 +448,8 @@ class Application
                                 //echo $tns;
                                 $config['dbConn'] = NewADOConnection("oci8");
 
-                                //if (!$config['dbConn']->Connect($tns, $config['database']['user'],$config['database']['password'])) {
-                                if (!$config['dbConn']->Connect( false, $config['database']['user'],$config['database']['password'],$config['database']['host'])){
+                                //if (!$config['dbConn']->Connect($tns, $config['database'][$dbSetup]['user'],$config['database'][$dbSetup]['password'])) {
+                                if (!$config['dbConn']->Connect( false, $config['database'][$dbSetup]['user'],$config['database'][$dbSetup]['password'],$config['database'][$dbSetup]['host'])){
                                     //trigger_error("Error Connect",E_WARNING);
                                     die('<b><h2>LittlePHP</h2><br>Error connecting to the Oracle database<br>Please Validate the Connection String into SaveConfigratonFile');
                                     return NULL;
@@ -460,9 +460,9 @@ class Application
                             //$config['dbConn']->execute();                           
                         }
                     } else {
-                        $config['dbConn'] = ADONewConnection($config['database']['connection']);
+                        $config['dbConn'] = ADONewConnection($config['database'][$dbSetup]['connection']);
 
-                        if (!$config['dbConn']->Connect($config['database']['host'], $config['database']['user'], $config['database']['password'], $config['database']['name'])) {
+                        if (!$config['dbConn']->Connect($config['database'][$dbSetup]['host'], $config['database'][$dbSetup]['user'], $config['database'][$dbSetup]['password'], $config['database'][$dbSetup]['name'])) {
                             //trigger_error("Error Connect",E_WARNING);
                             die('<b><h1>LittlePHP</h1><br><h2>Error connecting to the database</h2><br>Please Validate the Connection String into SaveConfigratonFile');
                             return NULL;
@@ -647,14 +647,14 @@ class Application
             switch (Application::getlog()) {
                 case 'sql':
                     $table          = Application::getLogTable();
-                    $name           = $config['database']['name'];
-                    $type           = $config['database']['connection'];
-                    $user           = $config['database']['user'];
-                    $pass           = $config['database']['password'];
-                    $host           = $config['database']['host'];
-                    $hostport       = $config['database']['hostport'];
-                    $db             = $config['database']['name'];
-                    $connection     = $config['database']['connection'];
+                    $name           = $config['database'][$dbSetup]['name'];
+                    $type           = $config['database'][$dbSetup]['connection'];
+                    $user           = $config['database'][$dbSetup]['user'];
+                    $pass           = $config['database'][$dbSetup]['password'];
+                    $host           = $config['database'][$dbSetup]['host'];
+                    $hostport       = $config['database'][$dbSetup]['hostport'];
+                    $db             = $config['database'][$dbSetup]['name'];
+                    $connection     = $config['database'][$dbSetup]['connection'];
                     $commandCurrent = $_REQUEST['action'];
                     // Data Source Name: This is the universal connection string
                     //$dsn = "$type://$user:$pass@$host:$hostport/$db";

@@ -13,7 +13,7 @@ require_once "config/config.inc.php";
 require_once "LittlePHP.class.php";
 require_once "FrontController.class.php";
 
-//error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
+error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 //Error Manager
 //$error = new Error();
 

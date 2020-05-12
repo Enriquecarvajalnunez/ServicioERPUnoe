@@ -126,18 +126,37 @@ $Application_config = array (
     'docstmp_dir' => '/web/docstmp',	
 
 
-// database  type = Mysql,Oracle,Pgsql,adodb
-    'database' => array (        
-        'name' => 'ERPO',
-        'type' => 'adodb',
-        'host' => 'ERPSCAN',
-        'hostport' =>'2682',
-        'user' => 'bwerp_adminis',
-        'password' => 'Temp$3RP',
-        'connection' => 'pdo_oci8'  //pdo_mysql,pdo_oci8,pdo_postgres,...        
+/*
+*Database  type = Mysql,Oracle,Pgsql,adodb (adodb permite realizar conexión a cualquier motor)
+*Envía los datos de conexión a la clase aplication linea 452
+*Debe existir el tnsname en la carpeta instantclient_19_6
+*@Autor: Enrique Nuñez
+*Mayo 05 del 2020
+*/
+    'database' => array (
+        
+        'default' => array(
+                'name' => 'OFANAPP',
+                'type' => 'adodb',
+                'host' => 'OFANAPPSCAN',
+                'hostport' =>'1521',
+                'user' => 'usr_impacta',
+                'password' => 'aceite4t',
+                'connection' => 'pdo_oci8'  //pdo_mysql,pdo_oci8,pdo_postgres,...        
+                ),
+        'bd2' => array (
+            'name' => 'ERPO',
+            'type' => 'adodb',
+            'host' => 'ERPSCAN',
+            'hostport' =>'2682',
+            'user' => 'runt_fanalca',
+            'password' => 'valera',
+            'connection' => 'pdo_oci8'  //pdo_mysql,pdo_oci8,pdo_postgres,...        
+            
+
+        )
         ),
     );
-
 echo "<pre>";
 print_r($Application_config);
 echo "</pre>";
