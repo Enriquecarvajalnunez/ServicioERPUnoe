@@ -10,17 +10,17 @@ function smarty_function_consult_table_xml($params)
   //print_r("<pre>");
   //print_r($MaxConsecutivo);
   $html='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-         <VFData>';
+         <VFPData>';
   $arraykeys = array();
 
   if (is_array($v))
   {  
     $arraykeys = array_keys($v[0]);
     //print_r($arraykeys);
-    for ($i=0;$i<count($v);$i++)
+    for ($i=0;$i<count($v);$i++)//iteración para las filas del arreglo
     {
      $html.="<".$itemName.">";
-     for ($j=0;$j<count($arraykeys);$j++)
+     for ($j=0;$j<count($arraykeys);$j++)//iteración para columnas del arreglo
      {
       if($arraykeys[$j]=="consecutivo")
       {
@@ -39,10 +39,10 @@ function smarty_function_consult_table_xml($params)
     $html.="<NODATAFOUND>NULL</NODATAFOUND>";
 
   }   
-  $html.="   </VFData>";
-  $report_output = Application::getReportDirectory() . "/" . $ruta . "/generados/".$file_name;
+  $html.="   </VFPData>";
+  $report_output = 'C:\xampp\htdocs\GeneracionXml\applications\launcher\report\xmls\generados\Importaciones.xml';
   file_put_contents($report_output,$html);
   echo "PROCESO FINALIZADO CON EXITO !!";
-}  
+}//Fin function  
 
 ?>
