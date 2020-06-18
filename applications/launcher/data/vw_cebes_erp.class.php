@@ -25,12 +25,12 @@ class vw_cebes_erp
     function getAllvw_cebes_erp()
     {        
         $sql2 = "select    TRIM(BOTH FROM ORDERNUMBER) as pedido,
-                           ORDERDATE as fechapedido,
+                           to_char(to_date(ORDERDATE,'YYYY/MM/DD'),'YYYY-MM-DD')as fechapedido,
                            MOTORNUMBER as motor,
                            CHASSIS as chasis, 
                            COLOR as  color,  
                            MODELUUID as modelo,
-                           ENSAMBLEDATE as fechaensamble,
+                        to_char(to_date(ENSAMBLEDATE,'YYYY/MM/DD'),'YYYY-MM-DD')as fechaensamble,
                            IMPORTDECLARATION as declaimportacion,
                            BANKDATE as fechabanco,
                            NATIONALNUMBER as nrolevante,
@@ -41,8 +41,9 @@ class vw_cebes_erp
                            PAINTCOLOR AS colorcalcomania,
                            ANOMODELO as fechamodelo
                             FROM vm_impacta_motos_xml
-                            where ensambledate >= TRUNC(sysdate-12)";     
-
+                            where ensambledate >= TRUNC(sysdate-3)
+                            ";     
+                            
                             //rownum <= 100            
 
         //$this->consult = $this->connection->GetAll($sql);                        
